@@ -1506,6 +1506,7 @@ class Wav2Vec2PreTrainedModel(PreTrainedModel):
         >>> model.load_adapter("spa")
         ```
         """
+        
         if self.config.adapter_attn_dim is None:
             raise ValueError(f"Cannot load_adapter for {target_lang} if `config.adapter_attn_dim` is not defined.")
 
@@ -1715,6 +1716,9 @@ class Wav2Vec2Model(Wav2Vec2PreTrainedModel):
 
         # Initialize weights and apply final processing
         self.post_init()
+
+    def get_input_embeddings(self):
+        return self.encoder.pos_conv_embed.conv
 
     def freeze_feature_extractor(self):
         """
