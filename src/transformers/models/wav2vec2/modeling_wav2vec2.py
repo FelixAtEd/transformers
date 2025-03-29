@@ -1506,7 +1506,7 @@ class Wav2Vec2PreTrainedModel(PreTrainedModel):
         >>> model.load_adapter("spa")
         ```
         """
-        
+        return
         if self.config.adapter_attn_dim is None:
             raise ValueError(f"Cannot load_adapter for {target_lang} if `config.adapter_attn_dim` is not defined.")
 
