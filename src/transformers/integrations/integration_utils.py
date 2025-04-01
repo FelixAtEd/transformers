@@ -275,8 +275,9 @@ def run_hp_search_optuna(trainer, n_trials: int, direction: str, **kwargs) -> Be
         if storage is not None and load_if_exists and study_name is not None:
             try:
                 study = optuna.load_study(study_name=study_name, storage=storage)
-            except:
-                study = optuna.create_study(study_name=study_name, storage=storage, direction=direction, directions=directions, **kwargs)
+                logger.info(f"Loaded existing study {study_name} from {storage}")
+            except KeyError:
+                study = optuna.create_study(study_name=study_name, storage=storage, direction=direction, directions=directions)
         else:
             study = optuna.create_study(direction=direction, directions=directions)
 
