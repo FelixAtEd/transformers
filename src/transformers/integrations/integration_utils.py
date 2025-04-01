@@ -268,10 +268,18 @@ def run_hp_search_optuna(trainer, n_trials: int, direction: str, **kwargs) -> Be
         gc_after_trial = kwargs.pop("gc_after_trial", False)
         directions = direction if isinstance(direction, list) else None
         direction = None if directions is not None else direction
-        if kwargs.get("storage") and kwargs.get("load_if_exists", False):
-            study = optuna.load_study(study_name=kwargs["study_name"], storage=kwargs["storage"])
+        storage = kwargs.pop("storage", None)
+        load_if_exists = kwargs.get("load_if_exists", False)
+        study_name = kwargs.get("study_name", "study")
+
+        if storage is not None and load_if_exists and study_name is not None:
+            try:
+                study = optuna.load_study(study_name=study_name, storage=storage)
+            except KeyError:                
+                study = optuna.create_study(study_name=study_name, storage=storage, direction=direction, directions=directions)
         else:
-            study = optuna.create_study(direction=direction, directions=directions, **kwargs)
+            study = optuna.create_study(direction=direction, directions=directions)
+
         study.optimize(_objective, n_trials=n_trials, timeout=timeout, n_jobs=n_jobs, gc_after_trial=gc_after_trial)
         if not study._is_multi_objective():
             best_trial = study.best_trial
